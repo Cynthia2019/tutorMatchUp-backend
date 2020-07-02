@@ -4,21 +4,22 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var uri = 'mongodb+srv://Cynthia:CA2019zryg@@cluster-tutormatchup.oshci.mongodb.net/tutorMatchUp?retryWrites=true&w=majority'
-const port = process.env.PORT || '3001'
+const port = process.env.PORT || '5000'
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+require('dotenv').config()
 
 var app = express();
 //connect to database 
 var db = require('./db')
-db.connect(uri, function(err) {
+db.connect(process.env.MONGODB_URI || uri, function(err) {
   if (err) {
     console.log('Unable to connect to Mongo.')
     process.exit(1)
   } else {
     app.listen(port, function() {
-      console.log('Listening on port 3001...')
+      console.log(`Listening on port ${port}`)
     })
   }
 })
@@ -37,9 +38,9 @@ app.use('/users', usersRouter);
 
 //check if using heroku 
 if(process.env.NODE_ENV === 'production'){
-    app.use(express.static('/Users/yujiaxie/Desktop/northwestern/dot_dev/tutor/build'))
+    app.use(express.static('tutor/build'))
     app.get('*', (req, res)=>{
-        res.sendFile('/Users/yujiaxie/Desktop/northwestern/dot_dev/tutor/build/index.html')
+        res.sendFile(path.join(__dirname,"tutor","build",'index.html'))
     })
 }
 

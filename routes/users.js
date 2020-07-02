@@ -6,9 +6,9 @@ var db = require('../db')
 /* GET users listing. */
 router.get('/all', function(req, res, next) {
   var collection = db.get().db().collection('users')
-  collection.find().toArray((res,err) => {
-    if(err){console.log(err); return;}
-    console.log(res)
+  collection.find().toArray((err) => {
+    if(err){return(res.json({success:false, error: err}))}
+    return(res.json({success:true}))
   }
   )
 });
