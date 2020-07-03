@@ -7,7 +7,7 @@
     "npm": "6.14.5"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "node ./bin/www",
     "backend": "nodemon app.js",
     "frontend": "npm run start --prefix client",
     "dev": "concurrently --kill-others  \"npm run backend\" \"npm run start --prefix client\"",
