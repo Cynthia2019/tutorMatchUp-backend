@@ -14,10 +14,12 @@ var app = express();
 var db = require('./db')
 db.connect(process.env.MONGODB_URI || uri, function(err) {
   if (err) {
-    console.log('Unable to connect to Mongo.')
+    console.log('Unable to connect to MongoDB.', err)
+    console.log(process.env, "process")
     process.exit(1)
   } else {
     app.listen(port, function() {
+      console.log(process.env, "process")
       console.log(`Listening on port ${port}`)
     })
   }
