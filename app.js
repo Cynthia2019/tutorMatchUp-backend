@@ -8,7 +8,6 @@ const port = process.env.PORT || '5000'
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-require('dotenv').config()
 
 var app = express();
 //connect to database 
@@ -42,6 +41,11 @@ if(process.env.NODE_ENV === 'production'){
     app.get('*', (req, res)=>{
         res.sendFile(path.join(__dirname,"tutor","build",'index.html'))
     })
+}
+// Reads environment variables from env file
+// Omitted in production environment
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
 }
 
 // catch 404 and forward to error handler
