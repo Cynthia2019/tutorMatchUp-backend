@@ -37,9 +37,9 @@ app.use('/users', usersRouter);
 
 //check if using heroku 
 if(process.env.NODE_ENV === 'production'){
-    app.use(express.static('tutor/build'))
+    app.use(express.static('client/build'))
     app.get('*', (req, res)=>{
-        res.sendFile(path.join(__dirname,"tutor","build",'index.html'))
+        res.sendFile(path.join(__dirname,"client","build",'index.html'))
     })
 }
 // Reads environment variables from env file
