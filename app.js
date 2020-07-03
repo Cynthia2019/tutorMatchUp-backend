@@ -15,11 +15,9 @@ var db = require('./db')
 db.connect(process.env.MONGODB_URI || uri, function(err) {
   if (err) {
     console.log('Unable to connect to MongoDB.', err)
-    console.log(process.env, "process")
     process.exit(1)
   } else {
     app.listen(port, function() {
-      console.log(process.env, "process")
       console.log(`Listening on port ${port}`)
     })
   }
@@ -39,6 +37,7 @@ app.use('/users', usersRouter);
 
 //check if using heroku 
 if(process.env.NODE_ENV === 'production'){
+  console.log(process.env, "process")
     app.use(express.static('client/build'))
     app.get('*', (req, res)=>{
         res.sendFile(path.join(__dirname,"client","build",'index.html'))
