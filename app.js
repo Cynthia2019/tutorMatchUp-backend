@@ -36,6 +36,7 @@ app.use('/users', usersRouter);
 
 //check if using heroku 
 if(process.env.NODE_ENV === 'production'){
+    console.log('production mode')
     app.use(express.static('client/build'))
     app.get('*', (req, res)=>{
         res.sendFile(path.join(__dirname,"client","build",'index.html'))
@@ -44,6 +45,7 @@ if(process.env.NODE_ENV === 'production'){
 // Reads environment variables from env file
 // Omitted in production environment
 if (process.env.NODE_ENV !== 'production') {
+  console.log('dev mode')
   require('dotenv').config();
 }
 
