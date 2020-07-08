@@ -31,6 +31,7 @@ var app = express();
 //connect to database and start the server
 var db = require('./db')
 db.connect(process.env.MONGODB_URI || uri, function(err) {
+  console.log(process.env.MONGODB_URI)
   if (err) {
     console.log('Cannot connect to MongoDB', error)
     process.exit(1)
@@ -60,14 +61,14 @@ app.use('/tutors', tutorRouter)
 app.use('/auth', authRouter);
 app.use('/register',registerRouter)
 
-//check if using heroku 
+// //check if using heroku 
 
-if(process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'client/build')));
-  app.get('*', (req, res) => {
-    res.sendfile(path.join(__dirname = 'client/build/index.html'));
-  })
-}
+// if(process.env.NODE_ENV === 'production') {
+//   app.use(express.static(path.join(__dirname, 'client/build')));
+//   app.get('*', (req, res) => {
+//     res.sendfile(path.join(__dirname = 'client/build/index.html'));
+//   })
+// }
 // Reads environment variables from env file
 // Omitted in production environment
 if (process.env.NODE_ENV !== 'production') {
