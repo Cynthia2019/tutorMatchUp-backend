@@ -1,12 +1,10 @@
 var createError = require('http-errors');
-var express = require('express');
+const express = require('express');
 var path = require('path');
 
 //Middleware to handle cookies
-var cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
-const port = process.env.PORT || 5000
 
 // Allow cross origin resource sharing 
 const cors = require('cors');
@@ -18,13 +16,13 @@ const corsConfig = {
 const {authenticate} = require('./controllers/auth')
 
 //ROUTES
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var tutorRouter = require('./routes/tutors')
-var authRouter = require('./routes/auth');
-var registerRouter = require('./routes/register')
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const tutorRouter = require('./routes/tutors')
+const authRouter = require('./routes/auth');
+const registerRouter = require('./routes/register')
 
-var app = express();
+const app = express();
 
 
 // view engine setup
@@ -61,31 +59,32 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+// // catch 404 and forward to error handler
+// app.use(function(req, res, next) {
+//   next(createError(404));
+// });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// // error handler
+// app.use(function(err, req, res, next) {
+//   // set locals, only providing error in development
+//   res.locals.message = err.message;
+//   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+//   // render the error page
+//   res.status(err.status || 500);
+//   res.render('error');
+// });
 
 
 //module.exports = app;
 //connect to database and start the server
-var db = require('./db')
+const db = require('./db')
 db.connect(process.env.MONGODB_URI || uri, function(err) {
   if (err) {
     console.log('Cannot connect to MongoDB', err)
     process.exit(1)
   }
+  app.listen(process.env.PORT || 5000, () => {           
+    console.log(`Server running on ${process.env.PORT || '5000'}`);    
+  });
 })
-
-module.exports = app;
