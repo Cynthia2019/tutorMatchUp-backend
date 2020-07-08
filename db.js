@@ -4,13 +4,13 @@ var state = {
     db: null,
   }
 //connect to database 
-exports.connect = function(uri, callback){
-    if(state.db) {return callback()}
+exports.connect = function(uri, done){
+    if(state.db) {return done()}
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     client.connect(function(err, db) {
-        if (err) return callback(err)
+        if (err) return done(err)
         state.db = db //connect to the client db 
-        callback()
+        done()
       })
 }
 
@@ -18,11 +18,11 @@ exports.get = function() {
     return state.db
   }
 
-exports.close = function(callback) {
+exports.close = function(done) {
 if (state.db) {
     state.db.close(function(err, result) {
     state.db = null
-    callback(err)
+    done(err)
     })
 }
 }
