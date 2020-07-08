@@ -6,8 +6,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-//MongoDB uri
-var uri = 'mongodb+srv://Cynthia:CA2019zryg@@cluster-tutormatchup.oshci.mongodb.net/tutorMatchUp?retryWrites=true&w=majority'
 const port = process.env.PORT || 5000
 
 // Allow cross origin resource sharing 
@@ -27,19 +25,6 @@ var authRouter = require('./routes/auth');
 var registerRouter = require('./routes/register')
 
 var app = express();
-
-//connect to database and start the server
-var db = require('./db')
-db.connect(process.env.MONGODB_URI || uri, function(err) {
-  if (err) {
-    console.log('Cannot connect to MongoDB', err)
-    process.exit(1)
-  } else {
-    app.listen(port, function() {
-      console.log(`Listening on port ${port}`)
-    })
-  }
-})
 
 
 // view engine setup
@@ -94,3 +79,15 @@ app.use(function(err, req, res, next) {
 
 
 //module.exports = app;
+//connect to database and start the server
+var db = require('./db')
+db.connect(process.env.MONGODB_URI || uri, function(err) {
+  if (err) {
+    console.log('Cannot connect to MongoDB', err)
+    process.exit(1)
+  } else {
+    app.listen(port, function() {
+      console.log(`Listening on port ${port}`)
+    })
+  }
+})

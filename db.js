@@ -6,7 +6,7 @@ var state = {
 //connect to database 
 exports.connect = function(uri, done){
     if(state.db) {return done()}
-    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
     client.connect(function(err, db) {
         if (err) return done(err)
         state.db = db //connect to the client db 
