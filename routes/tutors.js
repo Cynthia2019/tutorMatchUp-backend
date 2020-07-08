@@ -10,7 +10,6 @@ router.get('/all', (req, res) => {
     const collection = db.get().db().collection('tutors')
     collection.find().toArray((err, result)=>{
         if(err){return(res.status(500).send('Server Error'))}
-        console.log(res)
         res.status(200).send(result)
     })
 })

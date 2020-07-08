@@ -10,6 +10,14 @@ var logger = require('morgan');
 var uri = 'mongodb+srv://Cynthia:CA2019zryg@@cluster-tutormatchup.oshci.mongodb.net/tutorMatchUp?retryWrites=true&w=majority'
 const port = process.env.PORT || 5000
 
+// Allow cross origin resource sharing 
+const cors = require('cors');
+const corsConfig = {
+  origin: true,  // enable request origin
+  credentials: true  // send cookies with cors
+}
+
+const {authenticate} = require('./controllers/auth')
 
 //ROUTES
 var indexRouter = require('./routes/index');
@@ -43,6 +51,8 @@ app.use(express.json()); //parse json bodies
 app.use(express.urlencoded({ extended: false })); //parse urlencode form bodies
 app.use(cookieParser()); //read and write cookies
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors(corsConfig)) // set cors headers
+app.use(authenticate); // adds user information to request if authentication exists
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

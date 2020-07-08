@@ -19,21 +19,34 @@ const db = require('../db')
  * FUNCTIONS
  */
 
+const authTokens = {};
+
 const checkLogin = async(req, res) => {
-    const collection = db.get().db().collection('users');
+    const collectionUser = db.get().db().collection('users');
+    const collectionTutor = db.get().db().collection('tutors')
     //first, check if the user is already logged in using req.user
     //if logged in, return error 403
     //check if there exists a user with the same password and email
     //if exist, create a jwt token 
     const { email, password } = req.body
-    await collection.findOne({email: email}, (err, user)=>{
+    await collectionUser.findOne({email: email}, async(err, user)=>{
+        var candidate = {};
         if(err){return(res.status(500).json({error:err}))} //if error, then it is a server side error, return 500
-        if(!user){return(res.status(404).send('User not found'))} //if error, then there is no user with same email, return 404
-        
-        var validPassword = bcrypt.compare(password, user.password)
+        candidate.tutee = user
+        candidate.tutee?candidate.type='tutee':candidate.type=null
+        await collectionTutor.findOne({email: email}, (err, user)=>{
+            if(err){return(res.status(500).json({error:err}))}
+            if(!user && !candidate){return(res.status(404).send('No matching user/tutor'))}
+            candidate.tutor = user
+            candidate.type?candidate.type='both':candidate.type='tutor'
+        })
+         //if error, then there is no user with same email, return 404
+        var validPassword = bcrypt.compare(password, candidate.tutee.password || candidate.tutor.password)
         if(!validPassword){return(res.status(401).send('Incorrect Password'))}//if error, then password is incorrect, return 401
         //if password correct, then generate a jwt token 
-        var token = jwt.sign({id: user._id}, SECRET, {expiresIn: 86400}) // expires in 24 hours
+        var token = jwt.sign({id: candidate.tutee._id || candidate.tutor._id}, SECRET, {expiresIn: 86400}) // expires in 24 hours
+        authTokens[token] = candidate;
+        res.cookie('AuthToken', token)
         res.status(200).send({success:true, token:token})
     })
 }
@@ -43,7 +56,16 @@ const logOut = (req, res) => {
     res.status(200).send({token: null})
 }
 
+//Middleware to check if a user is logged in, if a token is detected, then 
+//attach the user object to the req body
+const authenticate = (req, res, next) => {
+    const token = req.cookies['AuthToken']
+    req.user = authTokens[token]; 
+    next()
+}
+
 module.exports = {
     checkLogin, 
-    logOut
+    logOut,
+    authenticate
 }

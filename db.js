@@ -8,7 +8,7 @@ exports.connect = function(uri, callback){
     if(state.db) {return callback()}
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     client.connect(function(err, db) {
-        if (err) return done(err)
+        if (err) return callback(err)
         state.db = db //connect to the client db 
         callback()
       })
