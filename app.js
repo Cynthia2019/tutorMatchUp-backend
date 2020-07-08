@@ -91,3 +91,5 @@ db.connect(process.env.MONGODB_URI || uri, function(err) {
     })
   }
 })
+
+module.exports = app;
