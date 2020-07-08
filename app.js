@@ -85,10 +85,6 @@ db.connect(process.env.MONGODB_URI || uri, function(err) {
   if (err) {
     console.log('Cannot connect to MongoDB', err)
     process.exit(1)
-  } else {
-    app.listen(port, function() {
-      console.log(`Listening on port ${port}`)
-    })
   }
 })
 
