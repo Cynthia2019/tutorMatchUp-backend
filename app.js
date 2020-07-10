@@ -76,6 +76,12 @@ if (process.env.NODE_ENV !== 'production') {
 //   res.render('error');
 // });
 
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '5000');
+
 
 //module.exports = app;
 //connect to database and start the server
@@ -86,18 +92,12 @@ db.connect(process.env.MONGODB_URI || uri, function(err) {
     process.exit(1)
   }
   app.set('port', port);
-  // app.listen(process.env.PORT || 5000, () => {           
-  //   console.log(`Server running on ${process.env.PORT || '5000'}`);    
-  // });
+  var server = http.createServer(app);
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
 })
 
-
-/**
- * Get port from environment and store in Express.
- */
-
-var port = normalizePort(process.env.PORT || '5000');
-app.set('port', port);
 
 function normalizePort(val) {
   var port = parseInt(val, 10);
@@ -115,10 +115,6 @@ function normalizePort(val) {
   return false;
 }
 
-var server = http.createServer(app);
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
 
 
 /**
