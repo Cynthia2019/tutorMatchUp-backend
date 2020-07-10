@@ -1,6 +1,7 @@
 var createError = require('http-errors');
 const express = require('express');
 var path = require('path');
+var http = require('http');
 
 //Middleware to handle cookies
 const cookieParser = require('cookie-parser');
@@ -84,7 +85,74 @@ db.connect(process.env.MONGODB_URI || uri, function(err) {
     console.log('Cannot connect to MongoDB', err)
     process.exit(1)
   }
-  app.listen(process.env.PORT || 5000, () => {           
-    console.log(`Server running on ${process.env.PORT || '5000'}`);    
-  });
+  app.set('port', port);
+  // app.listen(process.env.PORT || 5000, () => {           
+  //   console.log(`Server running on ${process.env.PORT || '5000'}`);    
+  // });
 })
+
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '5000');
+app.set('port', port);
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+var server = http.createServer(app);
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  console.log(`Listening on port ${port}`)
+}
