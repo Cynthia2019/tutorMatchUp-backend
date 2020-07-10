@@ -6,7 +6,8 @@ var ObjectID = require('mongodb').ObjectID
 
 /* GET users listing. */
 router.get('/all', function(req, res, next) {
-  var collection = db.get().db().collection('users')
+ // var collection = db.get().db().collection('users')
+ var collection = db.get().collection('users')
   collection.find().toArray((err, result) => {
     if(err){return(res.status(404).json({success:false, error: err}))}
     return(res.status(200).send(result))
