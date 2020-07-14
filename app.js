@@ -86,7 +86,7 @@ var port = normalizePort(process.env.PORT || '5000');
 //module.exports = app;
 //connect to database and start the server
 const db = require('./db')
-db.connect(process.env.MONGODB_URI || uri, function(err) {
+db.connect(process.env.MONGODB_URI, function(err) {
   if (err) {
     console.log('Cannot connect to MongoDB', err)
     process.exit(1)

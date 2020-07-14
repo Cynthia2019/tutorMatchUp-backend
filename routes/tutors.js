@@ -15,9 +15,9 @@ router.get('/all', (req, res) => {
 })
 
 //GET one tutor by id
-router.get('/getOneTutor', (req, res)=>{
+router.get('/getOneTutor/:id', (req, res)=>{
     const collection = db.get().db().collection('tutors')
-    var id = new ObjectID(req.body.id)
+    var id = new ObjectID(req.params.id)
     collection.findOne({_id: id}, (err, result)=>{
         if(err){return(res.status(404).json({success:false, error:err}))}
         res.status(200).send(result)
@@ -39,6 +39,7 @@ router.delete('/deleteOneTutor', (req, res)=>{
 router.patch('/updateInfo', (req, res)=>{
     const collection = db.get().db().collection('tutors')
     var id = new ObjectID(req.body.id)
+    console.log(id)
     collection.findOneAndUpdate({_id: id}, 
         {$set: {
             currentClass: req.body.currentClass, 
@@ -46,12 +47,37 @@ router.patch('/updateInfo', (req, res)=>{
             gpa: req.body.gpa,
             phone: req.body.phone
         }}, {returnNewDocument: true}, (err, result)=>{
-            if(err){return(res.status(404).send('No tutor with this ID found'))}
-            else {res.status(200).send(result)}
+            if(err){return(res.status(500).send('Server Error'))}
+            else if(!result.lastErrorObject.updatedExisting){
+                return res.status(404).send('No manufacturer with that ID found');
+            }
+            else { 
+                res.status(200).send({
+                    updatedClass: req.body.currentClass, 
+                    updatedSubject: req.body.subject, 
+                    updatedGPA: req.body.gpa,
+                    updatedPhone: req.body.phone
+            })
+            }
         })
 })
 
 router.patch('/updateAvatar', uploadFile)
+
+router.patch('/updateSchedule', (req, res)=>{
+    const collection = db.get().db().collection('tutors')
+    var id = new ObjectID(req.body.id)
+    console.log(id)
+    collection.findOneAndUpdate({_id: id}, {
+        $set: {availableTime: req.body.schedule}
+    }, (err, result)=>{
+        if(err){return res.send("Server Error")}
+        else if(!result.lastErrorObject.updatedExisting){return res.status(404).send("No tutor with that id found")}
+        else {console.log(res, result.value.availableTime)
+            res.status(200).send({schedule: req.body.schedule})}
+    })
+    
+})
 
 
 module.exports = router; 

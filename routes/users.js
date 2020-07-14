@@ -7,7 +7,7 @@ var ObjectID = require('mongodb').ObjectID
 /* GET users listing. */
 router.get('/all', function(req, res, next) {
  // var collection = db.get().db().collection('users')
- var collection = db.get().collection('users')
+ var collection = db.get().db().collection('users')
   collection.find().toArray((err, result) => {
     if(err){return(res.status(404).json({success:false, error: err}))}
     return(res.status(200).send(result))
@@ -16,14 +16,13 @@ router.get('/all', function(req, res, next) {
 });
 
 /**GET one user */
-router.get('/getOneUser', (req, res)=>{
+router.get('/getOneUser/:id', (req, res)=>{
   var collection = db.get().db().collection('users')
-  const {email, password} = req.body
-  collection.find({email: email, password: password})
-            .toArray((err,result)=>{
-              if(err){return(res.status(404).json({success:false, error: err}))}
-              return(res.status(200).send(result))
-            })
+  var id = new ObjectID(req.params.id)
+  collection.findOne({_id: id}, (err, result)=>{
+    if(err){return(res.status(404).json({success:false, error:err}))}
+    res.status(200).send(result)
+})
 })
 
 /**DELETE user */
@@ -38,6 +37,31 @@ router.delete('/deleteOneUser', (req, res)=>{
   })
 })
 
+//UPDATE tutor info 
+// update class, subject, gpa, phone
+router.patch('/updateInfo', (req, res)=>{
+  const collection = db.get().db().collection('users')
+  var id = new ObjectID(req.body.id)
+  console.log(id)
+  collection.findOneAndUpdate({_id: id}, 
+      {$set: {
+          currentClass: req.body.currentClass, 
+          gpa: req.body.gpa,
+          phone: req.body.phone
+      }}, {returnNewDocument: true}, (err, result)=>{
+          if(err){return(res.status(500).send('Server Error'))}
+          else if(!result.lastErrorObject.updatedExisting){
+              return res.status(404).send('No manufacturer with that ID found');
+          }
+          else { 
+              res.status(200).send({
+                  updatedClass: req.body.currentClass, 
+                  updatedGPA: req.body.gpa,
+                  updatedPhone: req.body.phone
+          })
+          }
+      })
+})
 
 
 module.exports = router;
